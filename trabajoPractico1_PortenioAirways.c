@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
+
+void validacionUsuario(int identificaciones[3], char *contrasenias[]);//con esta funcion vamos a validar que el usuario y contrasenia coinncida con alguno de los datos
+
 void procesoDestino(char *destinosNacionales[], char *destinosInternacionales[][6]);//esta funcion se encargara de mostrar los destinos disponibles, tanto nacionales como internacionales;
 
 //funcion que usaremos para mostrar los destinos nacionales disponibles:
@@ -14,6 +17,14 @@ void seleccionDestinoNacional(int codigoDestino, char *destinoNacioanal[],char *
 void seleccionDestinoInternacional(int codigoDestino, char *destinosInternacioanles[][6],char *nombreDestino, int continente);//esta funcion sera la encargada de retornar el destino internacional seleccionado por el cliente;
 
 int main(){
+	
+	int identificaciones[3] = {1111, 2222, 3333};//identificaciones
+	
+	char *contrasenias[] = {"JPK12","PERU","LMH65", NULL};// contraseñas
+	
+	//llamamos a la funcion de validacion:
+	validacionUsuario(identificaciones, contrasenias);
+	
 	//creamos los arreglos de los destinos:
 	
 	char *destinosNacionales[] = {"Chabut", "Cordoba","Corrientes","Entre Rios","Formosa","Jujuy","Rio Negro","Salta","San Luis","Santa Fe","Santiago del Estero","Tierra de fuego","Tucuman", NULL};
@@ -30,6 +41,72 @@ int main(){
 	
 	return 0;
 }
+
+//validacion de usuario:
+void validacionUsuario(int identificaciones[3], char *contrasenias[]){
+	
+	int validoIndentificacion, 
+	validoContrasenia,
+	i,
+	identificacion;
+	
+	char contrasenia[5];
+	
+	//mostramos las identificaciones:
+	printf("--------------------\nIdentificaciones:\n");
+	for(i = 0; i < sizeof(identificaciones) / sizeof(identificaciones[0]); i++){
+		printf("( %d )\n", identificaciones[i]);
+	}
+	//mostramos las contrasenias
+	printf("--------------------\nContrasenias:\n");
+	for(i = 0; contrasenias[i] != NULL; i++){
+		printf("( %s )\n", contrasenias[i]);	
+	}
+	printf("--------------------\n");
+	
+	do{
+		validoIndentificacion = 0;
+		validoContrasenia = 0;
+		
+		fflush(stdin);
+		printf("Ingrese un numero de usuario\n");
+		scanf("%d", &identificacion);
+		
+		printf("Ingrese la contrasenia\n");
+		scanf("%s", &contrasenia);
+		
+		for(i = 0; i < sizeof(identificaciones) / sizeof(identificaciones[0]); i++){
+			if(identificacion == identificaciones[i]){
+				validoIndentificacion = 1;
+				break;
+			}
+		}
+		for(i = 0; contrasenias[i] != NULL; i++){
+			if( strcmp(contrasenia, contrasenias[i]) == 0){//usamos strcmp  la cual toma dos argumnetos , Devuelve un valor negativo si la primera cadena es menor que la segunda. Devuelve 0 si las dos cadenas son iguales. Devuelve un valor positivo si la primera cadena es mayor que la segunda.
+				validoContrasenia = 1;
+				break;
+			}	
+		}
+		//si se equivoca validamos en cual se equivoco
+		if(validoIndentificacion == 0 && validoContrasenia == 0){
+			printf("Su identificacion y contrasenia no se encuentran registrados\n");
+		}else{
+			if(validoIndentificacion == 0){
+				printf("Su identificacion no es correcta\n");
+			}else{
+				if(validoContrasenia == 0){
+					printf("Su contrasenia no es correcta\n");
+	
+				}
+			}
+		}
+		
+	}while(validoIndentificacion == 0 || validoContrasenia == 0);
+	system("cls");
+}
+
+
+
 
 //creamos la funcion que se encargara de todo el proceso de viaje: 
 void procesoDestino(char *destinosNacionales[], char *destinosInternacionales[][6]){
@@ -132,7 +209,7 @@ void mostrarDestinoExterior(char *destinoInternacional[][6], int opc){
 //esta es la que se encargara de asignar el destino nacional seleccionado
 void seleccionDestinoNacional(int numeroDestino, char *destinoNacioanal[], char *nombreDestino){
 	int i;
-	
+	char nombre[20];
 	//recorremos cada elemento de destinoNacional osea cada provincia
 	for(i = 0; destinoNacioanal[i] != NULL; i++){
 		if((numeroDestino - 1) == i){//si coincide numero de destino con i que es el elemento que se esta iterando entonces quiere decir que enconytramos el destino
