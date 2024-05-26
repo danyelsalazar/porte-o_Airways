@@ -11,6 +11,8 @@ void mostrarDatosInicioSesion(char usuriosContrasenias[2][2][10], int tamanioArr
 //declaramos la funcion de validacion de usuario:
 void validacionUser(char usuriosContrasenias[2][2][10], int *comprobado);
 
+
+
 //declaramos la funcion que usaremos para recorrer y mostrar los destino de europa la cual recibira una matriz
 void mostrarDestinosEuropa(char europa[3][3][20]);
 //declaramos la funcion que usaremos para recorrer y mostrar los destino de asia y america la cual recibira un vector
@@ -19,6 +21,10 @@ void mostrarDestinosAsiaAmerica(char vector[3][20]);
 void seleccionDestinosEuropa(char europa[3][3][20], int opc,  char *nombreDestino);
 //declaramos la funcion que usaremos para la seleccion de destino america y asia:
 void seleccionDestinoAmericaAsia(char vector[3][20], int opc, char *nombreDestino);
+
+
+//declaramos la funcion que mostrara los servivios adicionales
+void mostrarServiciosAdicionales(int *equipaje, int *asiento, int *comida, int claseVuelo);
 
 
 int main(){
@@ -99,15 +105,51 @@ int main(){
 				}while(opc != 1);
 				
 			    seleccionDestinoAmericaAsia(asia, opc, nombreDestino);
-			    printf("nombre destino: %s", nombreDestino);
+			    //printf("nombre destino: %s", nombreDestino);
 			break;
 		}
 		
 		//------------------------------------TIPO DE VUELO Y SERVIVIO ADICIONAL-------------------------------------
+		system("cls");//limpiamos la consola
+		int tipoVuelo, servicioAdicional, adicional, 
+			equipaje = 0, 
+			asiento = 0,
+			comida= 0 ;
 		
-		int tipoVuelo;
+		printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
+
+		printf("---------------------------------\n         Ingrese la clase de vuelo:\n---------------------------------\n1- Economica\n2- Primera Clase\n");
+		do{
+			scanf("%d", &tipoVuelo);
+			if(tipoVuelo != 1 && tipoVuelo != 2){
+				printf("La opcion ingresada no corresponde a ninguna clase\n");
+			}
+		}while(tipoVuelo != 1 && tipoVuelo != 2);
+		
+		system("cls");//limpiamos
+		printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
+		printf("-----------------------------------\n         Solicitud de servicios\n-----------------------------------\n");
+		//preguntamos si desea servivios adicionales: 
+		printf("1- Desplegar menu de servicios adicionales \n2- Continuar sin servicios adicionales\n");
+		do{
+			scanf("%d", &adicional);
+			if(adicional != 1 && adicional != 2){
+				printf("La opcion ingresada es incorrecta vuleve a intentarlo\n");
+			}	
+		}while(adicional != 1 && adicional != 2);
+		
+		if(adicional == 1){
+			system("cls");//limpiamos
+	    	printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
+			//llamamos a la funcion de que muetra los servicios adicionales
+			mostrarServiciosAdicionales(&equipaje, &asiento, &comida, tipoVuelo);
+			printf("Equipaje: %d, asiento: %d , comida: %d\nTipo de clase (1 economica) (2 primera clase): %d\n", equipaje, asiento, comida, tipoVuelo);
+			printf("nombre destino: %s", nombreDestino);
+		}
 		
 		
+		printf("Hacer otro tramite de vuelo: 1(si) 2(no)\n");
+		scanf("%d", &sigue);
 		
 		
 		break;
@@ -207,6 +249,71 @@ void seleccionDestinoAmericaAsia(char vector[3][20], int opc, char *nombreDestin
 	}
 }
 
+
+//creamos la funcion de los servicios adicionales:
+void mostrarServiciosAdicionales(int *equipaje, int *asiento, int *comida, int claseVuelo){
+	
+	int continuar = 0, 
+	 auxEquipaje = 0,
+	 auxAsiento = 0,
+	 auxComida = 0,
+	 tipoServicioAdi;
+	 
+	//mostramos los servivios disponibles y esperamos la entrada del usuario
+	printf("-----------------------------------------------\n           SERVICIOS ADICIONALES\n-----------------------------------------------\n");
+    //leemos y validamos el tipo de servivio adicional:
+    do{
+		printf("1- Equipaje adicional\n2- Seleccion de asiento espesifico\n3- Comida\n");
+		do{
+    		scanf("%d", &tipoServicioAdi);
+    		//si ingresa una opcion erronea le informamos:
+    		if(tipoServicioAdi != 1 && tipoServicioAdi != 2 && tipoServicioAdi != 3){
+    			printf("El servivo solicitado no existe, vuelve a ingresar el numero de servivo\n");
+			}else{
+				//ahora validamos que no vuelva a elegir el mismo servivio que ya solicito:
+				switch(tipoServicioAdi){
+					case 1: 
+						if(auxEquipaje == 0){
+							*equipaje = 1; // le asignamos 1 a la variable que veiene por referencia para asi saber que contrato ese servicio adicional
+							auxEquipaje = 1;
+						}else{
+							printf("El servicio ingresado ya lo solicitaste\n");
+						}
+						break;
+					case 2: 
+						if(auxAsiento == 0){
+							*asiento = 1;// le asignamos 1 a la variable que veiene por referencia para asi saber que contrato ese servicio adicional
+							auxAsiento = 1;
+				  	  	}else{
+							printf("El servicio ingresado ya lo solicitaste\n");
+				   	 	}
+				   	 	break;
+					case 3:
+						//verificamos si es primera clase o no y en caso de serlo le informamos que ya trae incluida la comida
+						if(claseVuelo == 2){
+							printf("La primera clase ya incluye comida\n");
+						}else{
+							if(auxComida == 0){
+								*comida = 1;// le asignamos 1 a la variable que veiene por referencia para asi saber que contrato ese servicio adicional
+								auxComida = 1;
+				   			}else{
+								printf("El servicio ingresado ya lo solicitaste\n");
+				  	    	}
+						}
+				    	break;
+				}
+			}
+		}while(tipoServicioAdi != 1 && tipoServicioAdi != 2 && tipoServicioAdi != 3);
+		
+		//preguntamos si desea aniadir otro servicio:
+		printf("Deseas aniadir otro servicio adicional? 1(SI) 2(NO)\n");
+		scanf("%d", &continuar);
+		
+	}while(continuar == 1);
+	
+	
+	
+}
 
 
 
