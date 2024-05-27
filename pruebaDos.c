@@ -5,6 +5,13 @@
 //identificacion de 6 digitos
 //contrasenia de 8 caracteres
 
+//---------------------DECLARAMOS E INICIALIZAMOS LAS VARIBALES GLOBALES------------------------
+const float prercioEEUU = 2800000, prercioEuropa = 3500000, prercioAsia = 4200000;
+const float recargaPrimeraClase = 3000000;
+
+
+
+//-----------------------------------------------------------------
 //declaramos la funcion de inicio de sesion
 void mostrarDatosInicioSesion(char usuriosContrasenias[2][2][10], int tamanioArreglo);
 
@@ -27,6 +34,11 @@ void seleccionDestinoAmericaAsia(char vector[3][20], int opc, char *nombreDestin
 void mostrarServiciosAdicionales(int *equipaje, int *asiento, int *comida, int claseVuelo);
 
 
+//declaramos la funcion para calcular el precio del boleto:
+float calculoPrecioBoleto(int continente, int tipoVuelo, int equipaje, int asiento, int comida);
+
+
+//iniciamos el main :
 int main(){
 	
 	//-------------------------------VALIDACION DE USUARIO---------------------------------------------
@@ -147,7 +159,16 @@ int main(){
 			printf("nombre destino: %s", nombreDestino);
 		}
 		
+		//----------------------------------------CALCULO DEL PRECIO DEL BOLETO-----------------------
 		
+		float costoBoleto = 0;
+		//llamamos a la funcion de calcular el precio del boleto:
+		
+		
+		
+		
+		
+		//---------preguntamos si desea realizar otro tramite osea otro proceso
 		printf("Hacer otro tramite de vuelo: 1(si) 2(no)\n");
 		scanf("%d", &sigue);
 		
@@ -311,9 +332,21 @@ void mostrarServiciosAdicionales(int *equipaje, int *asiento, int *comida, int c
 		
 	}while(continuar == 1);
 	
+}
+
+
+//creamos la funcion que hara el calculo del boleto:
+float calculoPrecioBoleto(int continente, int tipoVuelo, int equipaje, int asiento, int comida){
+	float calculo = 0;
 	
+	switch(continente){
+		case 1:
+			calculo +=  europa;
+			break; 
+	}
 	
 }
+
 
 
 
