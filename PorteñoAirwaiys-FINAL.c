@@ -44,7 +44,7 @@ void mostrarDatosInicioSesion(char usuriosContrasenias[2][2][10], int tamanioArr
 }
 
 //funcion que validara los datos del usuario y nos dara acceso o no a la plataforma del aereopuero:
-void validacionUser(char usuriosContrasenias[2][2][10], int *comprobado){
+void validacionUser(char usuriosContrasenias[2][2][10], int *comprobado, char identificacionUser[6]){
 	char identificacion[10], contrasenia[10];
 	int validacion = 0;
 	do{
@@ -67,6 +67,8 @@ void validacionUser(char usuriosContrasenias[2][2][10], int *comprobado){
 	}while(validacion == 0);
 	
 	*comprobado = validacion;
+	
+	strcpy(identificacionUser,identificacion);
 }
 //-----------------------------------------------------------------
 
@@ -96,13 +98,14 @@ void mostrarDestinosAsiaAmerica(char vector[3][20]){
 }
 
 //creamos la funcion de seleccion de destino de europa:
-void seleccionDestinosEuropa(char europa[3][3][20], int opc, char *nombreDestino){
+void seleccionDestinosEuropa(char europa[3][3][20], int opc, char *nombreDestino, char fechaViaje[20]){
 	int f,c;
 	
 	for(f = 0; f < 3; f++){
 		for(c = 0; c < 1; c++){
 			if(opc == f+1){
 				strcpy(nombreDestino, europa[f][c]);
+				strcpy(fechaViaje, europa[f][c+1]);
 				return;
 			}
 		}
@@ -110,12 +113,13 @@ void seleccionDestinosEuropa(char europa[3][3][20], int opc, char *nombreDestino
 	
 }
 //cremaos la funcion de selecio de destino de asia y america
-void seleccionDestinoAmericaAsia(char vector[3][20], int opc, char *nombreDestino){
+void seleccionDestinoAmericaAsia(char vector[3][20], int opc, char *nombreDestino, char fechaViaje[20]){
 	int f;
 	
 	for(f = 0; f < 1; f++){
 		if(opc == f+1){
 			strcpy(nombreDestino, vector[f]);
+			strcpy(fechaViaje, vector[f+1]);
 		}
 	}
 }
@@ -323,7 +327,7 @@ int main(){
 	//guaradamos el tamanio del arreglo:
 	int tamanioArreglo = sizeof(usuriosContrasenias) / sizeof(usuriosContrasenias[0]);
 	int comprobado; // esta varibale la usaremos como referencia para saber si se valido o no el usuario: 0(no), 1(si).
-	
+	char identificacionUser[6];
 	//----------------------------------------------------------------
 	
 	
@@ -337,7 +341,7 @@ int main(){
 	
 	int opc; //numero de la opción escogida
 	char nombreDestino[20]; // Codigo del destino
-	
+	char fechaViaje[20];
 	int continente, sigue = 1;
 	
 	//----------------------------------------------------------------
@@ -400,7 +404,7 @@ int main(){
 			mostrarDatosInicioSesion(usuriosContrasenias, tamanioArreglo);
 			
 			//llamamos a la funcion de validacion de usuario:
-			validacionUser(usuriosContrasenias, &comprobado);
+			validacionUser(usuriosContrasenias, &comprobado, identificacionUser);
 			printf("Comprobado: %d", comprobado);
 			
 			system("cls");
@@ -431,7 +435,7 @@ int main(){
 							}
 						}while(opc != 1 && opc != 2 && opc != 3);
 						
-						seleccionDestinosEuropa(europa, opc, nombreDestino);//asignamos el destino por medio de la funcion a la varibale nombreDestino
+						seleccionDestinosEuropa(europa, opc, nombreDestino, fechaViaje);//asignamos el destino por medio de la funcion a la varibale nombreDestino
 						printf("Nombre del destino: %s", nombreDestino);
 						break;
 					case 2:
@@ -444,7 +448,7 @@ int main(){
 							}
 						}while(opc != 1);
 						
-						seleccionDestinoAmericaAsia(americaDelNorte, opc, nombreDestino);
+						seleccionDestinoAmericaAsia(americaDelNorte, opc, nombreDestino, fechaViaje);
 						printf("Nombre del destino: %s", nombreDestino);
 						break;
 					case 3: 
@@ -457,7 +461,7 @@ int main(){
 							}
 						}while(opc != 1);
 						
-					    seleccionDestinoAmericaAsia(asia, opc, nombreDestino);
+					    seleccionDestinoAmericaAsia(asia, opc, nombreDestino, fechaViaje);
 					break;
 				}
 				//---------------------------------------------------------
@@ -533,10 +537,11 @@ int main(){
 				//mostramos los datos del boleto
 				printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
 				printf("---------------------------------------\n                 BOLETO\n---------------------------------------\n\n");
-				printf("Equipaje: %d, asiento: %d , comida: %d\nTipo de clase:\n(1 economica) (2 primera clase): %d\n\n", equipaje, asiento, comida, tipoVuelo);
-				printf("nombre destino: %s\nContinente: %d\n\n", nombreDestino, continente);
-				printf("Meses de anticipacion: %d\n\n", MesesDiferencia);
-				printf("El costo total del voleto es: %.2f $\n\n---------------------------------------\n---------------------------------------", costoBoleto);
+				printf("- Equipaje: %d, asiento: %d , comida: %d\nTipo de clase:\n(1 economica) (2 primera clase): %d\n\n", equipaje, asiento, comida, tipoVuelo);
+				printf("- nombre destino: %s\n- Continente: %d\n\n", nombreDestino, continente);
+				printf("- Meses de anticipacion: %d\n- Fecha de viaje: %s\n\n", MesesDiferencia, fechaViaje);
+				printf("- Identificacion del pasajero: %s\n\n", identificacionUser);
+				printf("- El costo total del voleto es: %.2f $\n\n---------------------------------------\n---------------------------------------", costoBoleto);
 				//---------------------------------------------------------------------------------------------------------------------------------
 				
 				//system("cls");
