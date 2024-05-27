@@ -5,8 +5,8 @@
 //---ESTRUCTURA ASCENDENTE---
 
 //------Variables globales------
-int CapacidadAvion_Eco = 200;
-int CapacidadAvion_Premium = 50;
+int capacidadAvion_Eco = 200;
+int capacidadAvion_Premium = 50;
 
 float ValorDest_America = 2800000;
 float ValorDest_Europa = 3500000;
@@ -299,6 +299,46 @@ float calculoPrecioBoleto(int continente, int tipoVuelo, int equipaje, int asien
 
 }
 
+//---------------------------------FUNCION PARA CALCULAR DESTINO MAS SOLICITADO-------------------------------------
+
+void Calc_DestinoMasSolicitado(int Destino_MasSolicitado[6], char Nombre_DestinoMasSolicitado[20]){
+	int i;
+	int posicionMax = 0;
+	int valorMax = Destino_MasSolicitado[0];
+	
+	for(i = 1; i < 6; i++){
+		if(Destino_MasSolicitado[i] > valorMax){
+			valorMax = Destino_MasSolicitado[i];
+			posicionMax = i;
+		}
+	}
+	
+	switch(posicionMax){
+		case 0:
+			strcpy(Nombre_DestinoMasSolicitado, "Ninguno");
+			break;
+		case 1:
+			strcpy(Nombre_DestinoMasSolicitado, "Espania");
+			break;
+		case 2:
+			strcpy(Nombre_DestinoMasSolicitado, "Francia");
+			break;
+		case 3:
+			strcpy(Nombre_DestinoMasSolicitado, "Italia");
+			break;
+		case 4:
+			strcpy(Nombre_DestinoMasSolicitado, "Estados Unidos");
+			break;
+		case 5:
+			strcpy(Nombre_DestinoMasSolicitado, "China");
+			break;
+
+	} 
+	
+}
+
+//----------------------------------------------------------------------------------------------------------------
+
 
 
 //-------------------------------------------------------------FUNCION MAIN-------------------------------------------------------------
@@ -310,7 +350,17 @@ int main(){
 	// ------------------------------acumuladores y contadores FINAL DEL PROGRAMA------------------------------------------
 	int totalPasajeros;
 	float totalRecaudado;
-	//aqui recuerda poner el vector que usaras para buscar elo destino mas solicitado
+	
+	//------------DESTINO MAS SOLICITADO------------
+	int cont_Espania = 0, 
+	cont_Italia = 0, 
+	cont_EEUU = 0, 
+	cont_Francia = 0, 
+	cont_China = 0;
+	
+	int Destino_MasSolicitado[6];
+	char Nombre_DestinoMasSolicitado[20] = "NINGUNO";
+
 	
 	//------------------------------PREGUNTA INICIO SESION------------------------------
 	
@@ -339,7 +389,7 @@ int main(){
 	char americaDelNorte[3][20] = {"Estados Unidos","12 de Diciembre","18:00pm"};
 	char asia[3][20] = {"China","9 de Enero","10:00am"};
 	
-	int opc; //numero de la opciÃ³n escogida
+	int opc; //numero de la opcion escogida
 	char nombreDestino[20]; // Codigo del destino
 	char fechaViaje[20];
 	int continente, sigue = 1;
@@ -358,12 +408,13 @@ int main(){
 	
 	//------------------------------CAPACIDAD DEL AVION-----------------------------------
 	
-	//Capacidad del avion [Clase economica, Primera Clase]
-    int Plane_FranciaEco = 200, Plane_FranciaFirstC = 50; 
-    int Plane_EspaniaEco = 200, Plane_EspaniaFirstC = 50;
-    int Plane_EEUUEco = 200, Plane_EEUUFirstC = 50;
-    int Plane_ChinaEco = 200, Plane_ChinaFirstC = 50;
-    int Plane_ItaliaEco = 200, Plane_ItaliaFirstC = 50;
+	//Capacidad del avion [tomamos como general]
+	//aqui pusimos valores pequeños pero es para poder probar el sistema ya que deberia ir en cada variable 200 asientos
+    int avion_EspaniaEco = 1,
+	 avion_FranciaEco = 1,
+	 avion_ItaliaEco = 0, 
+     avion_EEUUEco = 2, 
+     avion_ChinaEco = 1;
 	
 	//-----------------------------------------------------------------
 	
@@ -378,6 +429,11 @@ int main(){
 	
 	//----------------------------VALOR TOTAL DEL VUELO------------------------------------------------
 	float costoBoleto = 0;
+	//-----------------------------------------------------------------
+
+	//varibales para los ciclos---------------------
+	int agotado, continuarBoleto;
+	
 	
 	//-----------PREGUNTA----------
 	do{
@@ -411,65 +467,134 @@ int main(){
 			//------------------------------------------
 			
 			while(comprobado == 1){
-			
-			totalPasajeros ++;//incrementamos la cantidad de pasajeros 
+			 
 			
 				//------------------SELECCIONAR DESTINO------------------
+				continuarBoleto = 1;
 				
-				//preguntamos el continente de destino:
-				printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
-				printf("------------------\nDESTINOS INTERNACIONALES DISPONIBLES\n------------------\n");
-				printf("1- Europa\n2- America del Norte\n3- Asia\n");
-				scanf("%d", &continente);
-				system("cls");
-			    printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
+				do{
+					//si ya se agotaron todos los asientos de todos los aviones le informamos al usuario que ya no hay asientos disponible para ningun destino
+					if(avion_EEUUEco < 1 && avion_ItaliaEco < 1 && avion_FranciaEco < 1 && avion_EspaniaEco < 1 && avion_ChinaEco < 1){
+						printf("\nLamentamos informarle que ya no hay asientos disponibles para ningun destino\nLo esperamos proximamente...\n");
+						Sleep(3000);//esperamos 3 segundos mientras lee el mensaje 
+						agotado = 0;//finalizamos el programa
+						continuarBoleto = 0;// asi no ejecutamos la parte de la fecha ni nada y finalizamos el proceso del boleto
+						
+					}else{
+						agotado = 0;
+					 	//preguntamos el continente de destino:
+						printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
+						printf("------------------\nDESTINOS INTERNACIONALES DISPONIBLES\n------------------\n");
+						printf("1- Europa\n2- America del Norte\n3- Asia\n");
+						scanf("%d", &continente);
+						system("cls");
+			    		printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
 		
-				switch(continente){
-					case 1:
-						printf("------------------------\n   DESTINOS EUROPA\n------------------------\n");
-						mostrarDestinosEuropa(europa);// llamamaos la funcion de mostrar el destino
-						do{
-							scanf("%d", &opc);//recibimos la opcion de destino
-							if(opc != 1 && opc != 2 && opc != 3){
-								printf("El destino selecionado no se encuentra registrado, ingresa un dato correcto\n");
-							}
-						}while(opc != 1 && opc != 2 && opc != 3);
+						switch(continente){
+							case 1:
+								printf("------------------------\n   DESTINOS EUROPA\n------------------------\n");
+								mostrarDestinosEuropa(europa);// llamamaos la funcion de mostrar el destino
+								do{
+									scanf("%d", &opc);//recibimos la opcion de destino
+									if(opc != 1 && opc != 2 && opc != 3){
+										printf("El destino selecionado no se encuentra registrado, ingresa un dato correcto\n");
+									}
+								}while(opc != 1 && opc != 2 && opc != 3);
+								//verificamos si quedan asiento disponibles para el vuelo
+								switch(opc){
+									case 1:
+										if(avion_EspaniaEco < 1) {
+											printf("Se agotaron los asientos para el destino selecionado, precione una tecla para elejir otro destino\n");
+											getch();  // Espera a que el usuario presione una tecla
+											agotado = 1;
+										}
+										avion_EspaniaEco --;// hacemos la resta necesaria a la cantidad de puestos que hay en el avion
+										break;
+									case 2: 
+										if(avion_FranciaEco < 1) {
+											printf("Se agotaron los asientos para el destino selecionado, precione una tecla para elejir otro destino\n");
+											getch();  // Espera a que el usuario presione una tecla
+											agotado = 1;
+										}
+										avion_FranciaEco --;// hacemos la resta necesaria a la cantidad de puestos que hay en el avion
+										break;
+									case 3:
+										if(avion_ItaliaEco < 1) {
+											printf("Se agotaron los asientos para el destino selecionado, precione una tecla para elejir otro destino\n");
+											getch();  // Espera a que el usuario presione una tecla
+											agotado = 1;
+										}
+										avion_ItaliaEco --;// hacemos la resta necesaria a la cantidad de puestos que hay en el avion
+										break;
+								}
+								if(agotado == 0){
+									seleccionDestinosEuropa(europa, opc, nombreDestino, fechaViaje);//asignamos el destino por medio de la funcion a la varibale nombreDestino
+									printf("Nombre del destino: %s", nombreDestino);
+								}
+								break;
+							case 2:
+								printf("------------------------\nDESTINOS AMERICA DEL NORTE\n------------------------\n");
+								mostrarDestinosAsiaAmerica(americaDelNorte);
+								do{
+									scanf("%d", &opc);
+									if(opc != 1){
+					    				printf("El destino selecionado no se encuentra registrado, ingresa un dato correcto\n");
+									}
+								}while(opc != 1);
 						
-						seleccionDestinosEuropa(europa, opc, nombreDestino, fechaViaje);//asignamos el destino por medio de la funcion a la varibale nombreDestino
-						printf("Nombre del destino: %s", nombreDestino);
-						break;
-					case 2:
-						printf("------------------------\nDESTINOS AMERICA DEL NORTE\n------------------------\n");
-						mostrarDestinosAsiaAmerica(americaDelNorte);
-						do{
-							scanf("%d", &opc);
-							if(opc != 1){
-					    		printf("El destino selecionado no se encuentra registrado, ingresa un dato correcto\n");
-							}
-						}while(opc != 1);
+								if(opc == 1){
+									if(avion_EEUUEco < 1){
+										printf("Se agotaron los asientos para el destino selecionado, precione una tecla para elejir otro destino\n");
+										getch();  // Espera a que el usuario presione una tecla
+										agotado = 1;	
+									}else{
+										avion_EEUUEco --;// hacemos la resta necesaria a la cantidad de puestos que hay en el avion
+									}
+								}
+								if(agotado == 0){
+										seleccionDestinoAmericaAsia(americaDelNorte, opc, nombreDestino, fechaViaje);
+						  	  	    //printf("Nombre del destino: %s", nombreDestino);
+								}
+								break;
+							case 3: 
+								printf("------------------------\n   DESTINOS ASIA\n------------------------\n");
+					   			mostrarDestinosAsiaAmerica(asia);
+					   			do{
+					    			scanf("%d", &opc);
+					    			if(opc != 1){
+					    				printf("El destino selecionado no se encuentra registrado, ingresa un dato correcto\n");
+									}
+								}while(opc != 1);
+							
+								if(opc == 1){
+									if(avion_ChinaEco < 1){
+										printf("Se agotaron los asientos para el destino selecionado, presione una tecla para elejir otro destino\n");
+										getch();  // Espera a que el usuario presione una tecla
+										agotado = 1;	
+									}else{
+										avion_ChinaEco --; // hacemos la resta necesaria a la cantidad de puestos que hay en el avion
+									}
+								}
+								if(agotado == 0){
+										seleccionDestinoAmericaAsia(asia, opc, nombreDestino, fechaViaje);
+						    		    //printf("Nombre del destino: %s", nombreDestino);
+								}
+							break;
+						}
 						
-						seleccionDestinoAmericaAsia(americaDelNorte, opc, nombreDestino, fechaViaje);
-						printf("Nombre del destino: %s", nombreDestino);
-						break;
-					case 3: 
-						printf("------------------------\n   DESTINOS ASIA\n------------------------\n");
-					    mostrarDestinosAsiaAmerica(asia);
-					    do{
-					    	scanf("%d", &opc);
-					    	if(opc != 1){
-					    		printf("El destino selecionado no se encuentra registrado, ingresa un dato correcto\n");
-							}
-						}while(opc != 1);
-						
-					    seleccionDestinoAmericaAsia(asia, opc, nombreDestino, fechaViaje);
-					break;
-				}
+					}
+					
+					system("cls");
+					
+				}while(agotado == 1);
+				
 				//---------------------------------------------------------
 				
 				system("cls");
 				
 				//----------------------------------------FECHA DE HOY-------------------------------------------
-				printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
+				while(continuarBoleto == 1){
+					printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
 				do{
 					printf("------------------\nFECHA (AAAA MM DD)\n------------------\n");
 				    printf("\nIngrese la fecha de hoy: ");
@@ -534,6 +659,10 @@ int main(){
 				//llamamos a la funcion que calcula el precio del boleto:
 				costoBoleto = calculoPrecioBoleto(continente, tipoVuelo, equipaje, asiento, comida, MesesDiferencia);
 				
+				printf("Procesando su boleto.....\n");//simulamos una espera;
+				Sleep(3000);//esperamos 3 segundos mientras lee el mensaje 
+				system("cls");//limpiamos 
+				
 				//mostramos los datos del boleto
 				printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
 				printf("---------------------------------------\n                 BOLETO\n---------------------------------------\n\n");
@@ -546,26 +675,72 @@ int main(){
 				
 				//system("cls");
 				
+				//------------------DESTINO MAS SOLICITADO--------------------
+				//Incrementamos la variable contador de acuerdo al destino solicitado por el pasajero
+				if(strcmp(nombreDestino, "Espania")==0){
+					cont_Espania++;
+				}else if(strcmp(nombreDestino, "Francia")==0){
+					cont_Francia++;
+				}else if(strcmp(nombreDestino, "China")==0){
+					cont_China++;
+				}else if(strcmp(nombreDestino, "Italia")==0){
+					cont_Italia++;
+				}else{
+					cont_EEUU++;
+				}
+				
+				//-------------------------------------------------------------------
+				
+				
 				//INICIALIZAMOS LAS VARIABLES NECESARIAS A 0
 				equipaje = 0;
 				comida = 0;
 				asiento = 0;
-				totalRecaudado += costoBoleto;
-				//----------------
-				comprobado = 0; //Para salir del bucle
+				continuarBoleto = 0;// salimos del bucle
+				totalRecaudado += costoBoleto; // le acumulamos los precios de los boletos
+				totalPasajeros ++;//incrementamos la cantidad de pasajeros
 			}
-		
+			
+			//----------------
+				comprobado = 0; //Para salir del bucle
+			   
+		}
+			
 			//----Pregunta----------
 			do{
-				printf("\nDesea iniciar sesion? SI/NO: ");
+				printf("\nDesea tramitar el boleto de otro usuario? SI/NO: ");
 				scanf("%s", &RTA);
 				//Limpiar buffer
 			}while(strcmp(RTA, "SI")!=0&&strcmp(RTA,"NO")!=0);
-			system("cls");//limpiamos	
+				
+			if(strcmp(RTA,"NO")==0){
+				printf("Cerrando Sesion...\n");
+				Sleep(2000);
+			}	
+			system("cls");//limpiamos
+	
 	}
 	
-	//--Se muestran resultados finales
+	//-----------DESTINO MAS SOLICITADO ASIGNANDO VALORES AL ARREGLO-------
 	
+	Destino_MasSolicitado[0] = 0;
+	Destino_MasSolicitado[1] = cont_Espania; 
+	Destino_MasSolicitado[2] = cont_Francia;
+	Destino_MasSolicitado[3] = cont_Italia; 
+	Destino_MasSolicitado[4] = cont_EEUU; 
+	Destino_MasSolicitado[5] = cont_China;
+	
+	
+	//recorremos el arreglo para buscar el mayor valor y retornamos el nombre del destino mas solicitado con la funcion
+	
+	Calc_DestinoMasSolicitado(Destino_MasSolicitado, Nombre_DestinoMasSolicitado);
+	
+	//--------------------------------------------------------------------
+	
+	//--Se muestran resultados finales
+	printf("--------------------------------------------\n______________PORTENIO AIRWAYS______________\n--------------------------------------------\n");
+	printf("\n- Total de reservas del dia: %d\n- Total recaudado: %.2f\n- El destino mas solicitado es: %s \n---------------------------------------", totalPasajeros, totalRecaudado,Nombre_DestinoMasSolicitado);
+
 	
 	return 0;
 }
